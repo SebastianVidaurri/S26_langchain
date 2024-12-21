@@ -1,7 +1,9 @@
 import os
 from dotenv import load_dotenv, find_dotenv
+#busca y carga el archivo .env
 _ = load_dotenv(find_dotenv())
 
+#cargamos chatgroq
 from langchain_groq import ChatGroq
 
 llamaChatModel = ChatGroq(

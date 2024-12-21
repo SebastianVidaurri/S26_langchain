@@ -1,12 +1,40 @@
 import os
+from dotenv import load_dotenv, find_dotenv
+#busca y carga el archivo .env
+_ = load_dotenv(find_dotenv())
 
-if os.getenv('VSCODE_RESOLVING_ENVIRONMENT'):
-    print("El código se está ejecutando en el entorno de Visual Studio Code.")
-else:
-    print("El código no se está ejecutando en el entorno de Visual Studio Code.")
+#cargamos chatgroq
+from langchain_groq import ChatGroq
 
-env_name = os.getenv('VIRTUAL_ENV')
-if env_name:
-    print(f"El entorno virtual actual es: {os.path.basename(env_name)}")
-else:
-    print("No se está utilizando un entorno virtual.")
+#instanciamos los modelos de llm
+#TODO: Cambiar por una funcion
+llamaChatModel = ChatGroq(
+    model="llama3-70b-8192"
+)
+
+mistralChatModel = ChatGroq(
+    model="mixtral-8x7b-32768"
+)
+
+#creamos un Chatprompt template
+from langchain_core.prompts import ChatPromptTemplate
+
+chat_template = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are an {profession} expert on {topic}."),
+        ("human", "Hello, Mr. {profession}, can you please answer a question?"),
+        ("ai", "Sure!"),
+        ("human", "{user_input}"),
+    ]
+)
+
+messages = chat_template.format_messages(
+    profession="Historian",
+    topic="The Kennedy family",
+    #la siguiente linea es el input del usuario
+    user_input="How many grandchildren had Joseph P. Kennedy?"
+)
+
+response = llamaChatModel.invoke(messages)
+
+print(response)
